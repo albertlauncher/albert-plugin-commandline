@@ -9,15 +9,14 @@
 #include <albert/iconutil.h>
 #include <albert/standarditem.h>
 #include <albert/systemutil.h>
-#include <functional>
-ALBERT_LOGGING_CATEGORY("terminal")
+ALBERT_LOGGING_CATEGORY("commandline")
 using namespace Qt::StringLiterals;
 using namespace albert;
 using namespace std;
 
 namespace{
 static auto getPaths() { return qEnvironmentVariable("PATH").split(u':', Qt::SkipEmptyParts); }
-static unique_ptr<Icon> makeIcon() { return makeImageIcon(u":path"_s); }
+static unique_ptr<Icon> makeIcon() { return makeImageIcon(u":commandline.svg"_s); }
 }
 
 Plugin::Plugin()

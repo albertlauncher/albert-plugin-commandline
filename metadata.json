@@ -1,11 +1,12 @@
 {
     "authors": ["@manuelschneid3r"],
     "credits": "Flatwoken Icon (CC BY-SA 4.0 DEED) by Alessandro Roncone",
-    "description": "Run executables in $PATH",
+    "description": "Run commandlines",
+    "description[de]": "Führe Kommandozeilen aus",
     "license": "MIT",
     "maintainers": ["@manuelschneid3r"],
     "name": "Commandline",
-    "name[DE]": "Kommandozeile",
+    "name[de]": "Kommandozeile",
     "plugin_dependencies": ["applications"],
-    "url": "https://github.com/albertlauncher/albert-plugin-PATH"
+    "url": "https://github.com/albertlauncher/albert-plugin-commandline"
 }

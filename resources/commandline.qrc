@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file alias="path">resources/path.svg</file>
+        <file>commandline.svg</file>
     </qresource>
 </RCC>
