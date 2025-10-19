@@ -4,7 +4,8 @@
     "description": "Run executables in $PATH",
     "license": "MIT",
     "maintainers": ["@manuelschneid3r"],
-    "name": "PATH",
+    "name": "Commandline",
+    "name[DE]": "Kommandozeile",
     "plugin_dependencies": ["applications"],
     "url": "https://github.com/albertlauncher/albert-plugin-PATH"
 }
