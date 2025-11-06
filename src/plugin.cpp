@@ -5,6 +5,7 @@
 #include <QFileSystemWatcher>
 #include <QLabel>
 #include <QStringList>
+#include <albert/logging.h>
 #include <albert/extensionregistry.h>
 #include <albert/iconutil.h>
 #include <albert/standarditem.h>
@@ -21,24 +22,34 @@ static unique_ptr<Icon> makeIcon() { return makeImageIcon(u":commandline.svg"_s)
 
 Plugin::Plugin()
 {
-    indexer_.parallel = [](const bool &abort){
-        set<QString> result;
+    indexer_.parallel = [](const bool &abort)
+    {
+        set<QString> executables;
         const auto paths = getPaths();
         DEBG << "Indexing" << paths.join(u", "_s);
-        for (const QString &path : paths) {
-            QDirIterator dirIt(path, QDir::NoDotAndDotDot|QDir::Files|QDir::Executable, QDirIterator::Subdirectories);
-            while (dirIt.hasNext()) {
-                if (abort) return result;
+
+        for (const QString &path : paths)
+        {
+            QDirIterator dirIt(path,
+                               QDir::NoDotAndDotDot|QDir::Files|QDir::Executable,
+                               QDirIterator::Subdirectories);
+
+            while (dirIt.hasNext())
+            {
+                if (abort)
+                    return executables;
                 dirIt.next();
-                result.insert(dirIt.fileName());
+                executables.insert(dirIt.fileName());
             }
         }
-        return result;
+
+        return executables;
     };
 
-    indexer_.finish = [this](set<QString> && res){
-        INFO << u"Indexed %1 executables [%2 ms]"_s.arg(res.size()).arg(indexer_.runtime.count());
-        index_ = ::move(res);
+    indexer_.finish = [this]
+    {
+        index_ = indexer_.takeResult();
+        INFO << u"Indexed %1 executables"_s.arg(index_.size());
     };
 
     watcher_.addPaths(getPaths());
@@ -52,7 +63,8 @@ Plugin::~Plugin() = default;
 QWidget *Plugin::buildConfigWidget()
 {
     auto t = uR"(<ul style="margin-left:-1em">)"_s;
-    for (const auto & path : getPaths())
+    for (const auto paths = getPaths();
+         const auto &path : paths)
         t += uR"(<li><a href="file://%1")>%1</a></li>)"_s.arg(path);
     t += u"</ul>"_s;
 
@@ -83,7 +95,7 @@ vector<Action> Plugin::buildActions(const QString &commandline) const
     return a;
 }
 
-void Plugin::handleTriggerQuery(Query &query)
+void Plugin::handleThreadedQuery(ThreadedQuery &query)
 {
     if (query.string().trimmed().isEmpty())
         return;

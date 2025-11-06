@@ -6,12 +6,12 @@
 #include <albert/extensionplugin.h>
 #include <albert/plugin/applications.h>
 #include <albert/plugindependency.h>
-#include <albert/triggerqueryhandler.h>
+#include <albert/threadedqueryhandler.h>
 #include <set>
 namespace albert { class Action; }
 
 class Plugin : public albert::ExtensionPlugin,
-               public albert::TriggerQueryHandler
+               public albert::ThreadedQueryHandler
 {
     ALBERT_PLUGIN
 
@@ -23,7 +23,7 @@ public:
     QWidget *buildConfigWidget() override;
     QString synopsis(const QString &) const override;
     QString defaultTrigger() const override;
-    void handleTriggerQuery(albert::Query&) override;
+    void handleThreadedQuery(albert::ThreadedQuery &) override;
 
 private:
 
