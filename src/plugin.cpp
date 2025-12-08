@@ -95,12 +95,12 @@ vector<Action> Plugin::buildActions(const QString &commandline) const
     return a;
 }
 
-void Plugin::handleThreadedQuery(ThreadedQuery &query)
+vector<RankItem> Plugin::handleGlobalQuery(Query &query)
 {
-    if (query.string().trimmed().isEmpty())
-        return;
+    vector<RankItem> matches;
 
-    vector<shared_ptr<Item>> results;
+    if (query.string().trimmed().isEmpty())
+        return matches;
 
     // Extract data from input string: [0] program. The rest: args
     QString potentialProgram = query.string().section(u' ', 0, 0, QString::SectionSkipEmpty);
@@ -109,7 +109,9 @@ void Plugin::handleThreadedQuery(ThreadedQuery &query)
     static const auto tr_rcmd = tr("Run '%1'");
 
     QString commonPrefix;
-    if (auto it = lower_bound(index_.begin(), index_.end(), potentialProgram); it != index_.end()){
+    if (auto it = lower_bound(index_.begin(), index_.end(), potentialProgram);
+        it != index_.end())
+    {
         commonPrefix = *it;
 
         while (it != index_.end() && it->startsWith(potentialProgram)) {
@@ -121,38 +123,35 @@ void Plugin::handleThreadedQuery(ThreadedQuery &query)
 
             auto commandline = remainder.isEmpty() ? *it : u"%1 %2"_s.arg(*it, remainder);
 
-            results.emplace_back(
-                StandardItem::make(
-                    {},
-                    commandline,
-                    tr_rcmd.arg(commandline),
-                    makeIcon,
-                    buildActions(commandline),
-                    commonPrefix
-                )
-            );
+            matches.emplace_back(StandardItem::make(*it,
+                                                    commandline,
+                                                    tr_rcmd.arg(commandline),
+                                                    makeIcon,
+                                                    buildActions(commandline),
+                                                    commonPrefix),
+                                 double(query.string().length()) / it->length());
             ++it;
         }
 
         // Apply completion string to items
         QString completion = u"%1 %2"_s.arg(commonPrefix, remainder);
-        for (auto &item: results)
-            static_pointer_cast<StandardItem>(item)->setInputActionText(completion);
+        for (auto &item : matches)
+            static_pointer_cast<StandardItem>(item.item)->setInputActionText(completion);
     }
 
-    // Build generic item
+    // Build feeling lucky item in triggered mode
+    if (!query.trigger().isEmpty())
+    {
 
-    static const auto tr_title = tr("I'm Feeling Lucky");
-    static const auto tr_description = tr("Try running '%1'");
-    results.emplace_back(
-        StandardItem::make(
-            {},
-            tr_title,
-            tr_description.arg(query.string()),
-            makeIcon,
-            buildActions(query.string())
-        )
-    );
+        static const auto tr_title = tr("I'm Feeling Lucky");
+        static const auto tr_description = tr("Try running '%1'");
+        matches.emplace_back(StandardItem::make({},
+                                                tr_title,
+                                                tr_description.arg(query.string()),
+                                                makeIcon,
+                                                buildActions(query.string())),
+                             .0);
+    }
 
-    query.add(results);
+    return matches;
 }

@@ -6,12 +6,12 @@
 #include <albert/extensionplugin.h>
 #include <albert/plugin/applications.h>
 #include <albert/plugindependency.h>
-#include <albert/threadedqueryhandler.h>
+#include <albert/globalqueryhandler.h>
 #include <set>
 namespace albert { class Action; }
 
 class Plugin : public albert::ExtensionPlugin,
-               public albert::ThreadedQueryHandler
+               public albert::GlobalQueryHandler
 {
     ALBERT_PLUGIN
 
@@ -23,7 +23,7 @@ public:
     QWidget *buildConfigWidget() override;
     QString synopsis(const QString &) const override;
     QString defaultTrigger() const override;
-    void handleThreadedQuery(albert::ThreadedQuery &) override;
+    std::vector<albert::RankItem> handleGlobalQuery(albert::Query &query) override;
 
 private:
 
