@@ -95,16 +95,16 @@ vector<Action> Plugin::buildActions(const QString &commandline) const
     return a;
 }
 
-vector<RankItem> Plugin::handleGlobalQuery(Query &query)
+vector<RankItem> Plugin::rankItems(QueryContext &ctx)
 {
     vector<RankItem> matches;
 
-    if (query.string().trimmed().isEmpty())
+    if (ctx.query().trimmed().isEmpty())
         return matches;
 
-    // Extract data from input string: [0] program. The rest: args
-    QString potentialProgram = query.string().section(u' ', 0, 0, QString::SectionSkipEmpty);
-    QString remainder = query.string().section(u' ', 1, -1, QString::SectionSkipEmpty);
+    // Extract data from input query: [0] program. The rest: args
+    QString potentialProgram = ctx.query().section(u' ', 0, 0, QString::SectionSkipEmpty);
+    QString remainder = ctx.query().section(u' ', 1, -1, QString::SectionSkipEmpty);
 
     static const auto tr_rcmd = tr("Run '%1'");
 
@@ -129,7 +129,7 @@ vector<RankItem> Plugin::handleGlobalQuery(Query &query)
                                                     makeIcon,
                                                     buildActions(commandline),
                                                     commonPrefix),
-                                 double(query.string().length()) / it->length());
+                                 double(ctx.query().length()) / it->length());
             ++it;
         }
 
@@ -140,16 +140,16 @@ vector<RankItem> Plugin::handleGlobalQuery(Query &query)
     }
 
     // Build feeling lucky item in triggered mode
-    if (!query.trigger().isEmpty())
+    if (!ctx.trigger().isEmpty())
     {
 
         static const auto tr_title = tr("I'm Feeling Lucky");
         static const auto tr_description = tr("Try running '%1'");
         matches.emplace_back(StandardItem::make({},
                                                 tr_title,
-                                                tr_description.arg(query.string()),
+                                                tr_description.arg(ctx.query()),
                                                 makeIcon,
-                                                buildActions(query.string())),
+                                                buildActions(ctx.query())),
                              .0);
     }
 

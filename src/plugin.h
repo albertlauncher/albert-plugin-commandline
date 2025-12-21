@@ -23,7 +23,7 @@ public:
     QWidget *buildConfigWidget() override;
     QString synopsis(const QString &) const override;
     QString defaultTrigger() const override;
-    std::vector<albert::RankItem> handleGlobalQuery(albert::Query &query) override;
+    std::vector<albert::RankItem> rankItems(albert::QueryContext &) override;
 
 private:
 
