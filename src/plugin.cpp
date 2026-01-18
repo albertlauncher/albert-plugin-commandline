@@ -5,8 +5,8 @@
 #include <QFileSystemWatcher>
 #include <QLabel>
 #include <QStringList>
+#include <albert/icon.h>
 #include <albert/logging.h>
-#include <albert/iconutil.h>
 #include <albert/standarditem.h>
 #include <albert/systemutil.h>
 ALBERT_LOGGING_CATEGORY("commandline")
@@ -16,7 +16,7 @@ using namespace std;
 
 namespace{
 static auto getPaths() { return qEnvironmentVariable("PATH").split(u':', Qt::SkipEmptyParts); }
-static unique_ptr<Icon> makeIcon() { return makeImageIcon(u":commandline.svg"_s); }
+static unique_ptr<Icon> makeIcon() { return Icon::image(u":commandline.svg"_s); }
 }
 
 Plugin::Plugin()
