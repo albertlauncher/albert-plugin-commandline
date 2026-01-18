@@ -6,7 +6,6 @@
 #include <QLabel>
 #include <QStringList>
 #include <albert/logging.h>
-#include <albert/extensionregistry.h>
 #include <albert/iconutil.h>
 #include <albert/standarditem.h>
 #include <albert/systemutil.h>
