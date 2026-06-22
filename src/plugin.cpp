@@ -94,7 +94,7 @@ vector<Action> Plugin::buildActions(const QString &commandline) const
     return a;
 }
 
-vector<RankItem> Plugin::rankItems(QueryContext &ctx)
+vector<RankItem> Plugin::rankItems(QueryContext ctx)
 {
     vector<RankItem> matches;
 
