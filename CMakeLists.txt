@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(commandline VERSION 2.6.0)
+project(commandline VERSION 2.7.0)
 
 find_package(Albert REQUIRED)
 
